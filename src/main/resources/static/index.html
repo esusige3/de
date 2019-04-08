@@ -90,7 +90,7 @@
                 url: "/comment/modi/"+id,
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
-                data: JSON.stringify(line.find('input').val()),
+                data: JSON.stringify(line.find('input').val().replace(/"/g, "")),
                 success:function () {
 
                     //alert(JSON.stringify(line.find('input').val()));

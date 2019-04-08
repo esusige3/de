@@ -25,16 +25,18 @@ public class AttachmentServicerImpl implements AttachmentService{
         {
             try {
                 User target = find.get();
+                String fileName = UUID.randomUUID().toString()+"_"+profile.getOriginalFilename();
                 String destFilename = "D://SpringDOC/uploaded"
                         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/mm/dd/"))
-                        + UUID.randomUUID().toString()
-                        +"_" +profile.getOriginalFilename();
+                        + fileName;
 
                     File destFile = new File(destFilename);
                     destFile.getParentFile().mkdirs();
                     profile.transferTo(destFile);
 
                     target.setProfilePathName(destFilename);
+                    target.setProfileFileName(fileName);
+                    target.setOriginalFileName(profile.getOriginalFilename());
                     this.userRepository.save(target);
                 return true;
             }
