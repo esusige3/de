@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script
+            src="http://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div>
+    userNAME <input id="username" autofocus><a href="/UserManagement.html">계정확인</a>
+    <br>COMMENT<br>
+    <textarea id="comment"></textarea>
+    <button onclick="writeComment()">commit</button>
+
+</div>
+<div>
+    <input type="file" id="upload-file" multiple>
+    <button onclick="uploadFile()">파일업로드</button>
+</div>
+<div id="comments-list"></div>
+
+<script>
+    
+    async function uploadFile() {
+        try{
+            let fileInput = $('#upload-file')[0].files[0];
+            let formData = new FormData();//<form></form>
+            formData.append("file",fileInput);
+            console.log("받았음");
+
+            let response = await $.ajax({
+                type: 'POST',
+                url: '/attachment',
+                data: formData,
+                contentType: false,
+                processData: false
+            });
+            console.log(response);
+        }catch (e) {
+            console.log("안보내짐...")
+        }
+
+    }
+    function printedComments(comment) {
+        $('#comments-list').append(
+            `<div id="line${comment.id}" style="display: flex; border-bottom: 1px solid silver;">
+                     <div style="width: 150px;">${comment.username}</div>
+                     <div style="width: 350px;overflow: auto;">${comment.content}</div>
+                     <div><button onclick="edit(this,${comment.id})">수정</button>
+                     <button onclick="deletData(${comment.id},this)">삭제</button></div></div>`
+        );
+    }
+
+    async function fetchCommentList(){
+        try{
+            let response = await $.get('/comment/list');
+           // $('#comments-list').html(JSON.stringify(response));
+            for(let i=0;i<response.length;i++){
+                printedComments(response[i]);
+                //let comment = response[i];
+                //printedComments(comment);
+
+            }
+        }catch (e) {
+            $('#comments-list').html(JSON.stringify(e));
+        }
+    }
+
+
+    let content = null;
+
+    async function edit(button,id){
+        let line = $(`#line${id}`);
+        if($(button).text()==='수정'){
+
+            content = $(line).find('div:nth-child(2)').html();
+            let input =`<input value="${content}">`;
+            line.find('div:nth-child(2)').html(input);
+            line.find('input').focus();
+            $(button).text('확인!');
+           $(button).next().text('취소');
+        }else if($(button).text()==='확인!'){
+            //삭제 ajax...
+            //line.find('div:nth-child(2)').html(comment.content);
+            let response = await $.ajax({
+                type: "PUT",
+                url: "/comment/modi/"+id,
+                contentType: "application/json; charset=UTF-8",
+                dataType: "json",
+                data: JSON.stringify(line.find('input').val()),
+                success:function () {
+
+                    //alert(JSON.stringify(line.find('input').val()));
+                    let line = $(`#line${id}`);
+                    line.find('div:nth-child(2)').html(line.find('input').val());
+                    $(button).text('삭제');
+                    $(button).prev().text('수정');
+
+                },
+                error : function (e) {
+                    alert("수정 오류!");
+                },complete : function () {
+                    $(button).text('수정');
+                    $(button).next().text('삭제');
+                }
+            });
+        }
+
+    }
+    async function writeComment() {
+
+
+        try{
+            let obj = new Object();
+            obj.name = $('#username').val();
+            obj.comment = $('#comment').val();
+
+            obj = JSON.stringify(obj);
+
+
+            let response = await $.post({
+                url: '/comment/write',
+                contentType: 'application/json',
+                data: obj
+            });
+            $('#comments-list').append(
+                printedComments(response));
+
+        }catch (e) {
+
+        }
+
+
+    }
+    async function deletData(id,button) {
+        if($(button).text()==='삭제') {
+            try {
+                if (confirm('Are you sure about that?') === true) {
+                    let resonse = await $.ajax({
+                        type: 'delete',
+                        url: `/comment/delete/${id}`
+                    });
+                    if (resonse === true) {
+                        let line = $(`#line${id}`).remove();
+                    } else alert("삭제 실패 :(");
+                }
+
+            } catch (e) {
+                console.log(JSON.stringify(e));
+
+            }
+        }else if($(button).text() ==='취소'){
+            let line = $(`#line${id}`);
+            line.find('div:nth-child(2)').html(content);
+            $(button).text('삭제');
+            $(button).prev().text('수정');
+        }
+
+
+    }
+    fetchCommentList();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+2019-04-01 10:18:06 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT * FORM[*] COMMENT"; SQL statement:
+SELECT * FORM COMMENT [42000-197]
+2019-04-07 20:32:23 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT * FORM[*] USER"; SQL statement:
+SELECT * FORM USER [42000-197]

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script
+            src="http://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+</head>
+<body><div>
+이름: <input id="uName"><br>
+이메일: <input id="uEmail"><button onclick="login()">로그인</button><br>
+    <button onclick="registUser()">가입</button></div>
+<div>
+    아이디: <input id="uId"><br>
+    <input type="file" id="upload-file">
+    <button onclick="uploadProfile()">프로필 갱신</button>
+</div>
+<div id="users-list"></div>
+
+
+<script>
+
+    async function uploadProfile() {
+        try{
+            let userId = $('#uId').val();
+
+            let fileInput = $('#upload-file')[0].files[0];
+            let formData = new FormData();//<form></form>
+            formData.append("file",fileInput);
+            console.log("받았음");
+
+
+            let response = await $.ajax({
+                type: 'POST',
+                url: '/attachment/appendProfile/'+userId,
+                data: formData,
+                contentType: false,
+                processData: false
+            });
+            console.log(response);
+            alert("등록 완료!");
+        }catch (e) {
+            console.log("안보내짐...")
+            console.log(JSON.stringify(e));
+        }
+
+    }
+
+
+    async function registUser() {
+        try{
+            let userPack = new Object();
+            userPack.username = $('#uName').val();
+            userPack.email = $('#uEmail').val();
+            userPack = JSON.stringify(userPack);
+
+            let response = await $.ajax({
+               type: "POST",
+               url: "user/init",
+                contentType: "application/json; charset=UTF-8",
+                dataType: "json",
+                data: userPack,
+                success:function () {
+                   alert("가입을 축하합니다.");
+
+
+                },
+                error: function (e) {
+                   alert("가입중 오류가 발생했습니다.");
+                }
+
+            });
+            $('#users-list').append(
+                PrintUser(response));
+
+        }catch (e) {
+            alert("완전한 오류!(콘솔을 확인하세요)");
+            console.log(JSON.stringify(e));
+        }
+    }
+
+    async function SecessionUser(id, button){
+        if($(button).text()==='삭제') {
+            try {
+                if (confirm('Are you sure about that?') === true) {
+                    let resonse = await $.ajax({
+                        type: 'delete',
+                        url: `/user/delete/${id}`
+                    });
+                    if (resonse === true) {
+                        let line = $(`#line${id}`).remove();
+                    } else alert("삭제 실패 :(");
+                }
+
+            } catch (e) {
+                console.log(JSON.stringify(e));
+
+            }
+        }else if($(button).text() ==='취소'){
+            let line = $(`#line${id}`);
+            line.find('div:nth-child(2)').html(content);
+            $(button).text('삭제');
+            $(button).prev().text('수정');
+        }
+    }
+
+    async function login() {
+        let userPack = new Object();
+        userPack.username = $('#uName').val();
+        userPack.email = $('#uEmail').val();
+        userPack = JSON.stringify(userPack);
+        console.log(userPack);
+        let response = await $.ajax({
+            type: "POST",
+            url: "user/login",
+            contentType: "application/json",
+            dataType: "json",
+            data: userPack,
+            success:function () {
+                //alert("로그인 성공! 당신의 ID: "+JSON.stringify(this.response.id));
+                alert("로그인 성공");
+
+            },
+            error: function (e) {
+                alert("회원의 정보가 없습니다.");
+            }
+
+        });
+
+    }
+    
+    async function PrintUser(user) {
+            $('#users-list').append(
+                `<div id="line${user.id}" style="display: flex; border-bottom: 1px solid silver;">
+                     <div style="width: 150px;">${user.username}</div>
+                     <div style="width: 350px;overflow: auto;">${user.email}</div>
+                     <div><button onclick="edit(this,${user.id})">수정</button>
+                     <button onclick="SecessionUser(${user.id},this)">삭제</button></div></div>`
+            );
+    }
+
+    async function fetchUserList(){
+        try{
+            let response = await $.get('/user/view');
+            // $('#comments-list').html(JSON.stringify(response));
+            for(let i=0;i<response.length;i++){
+                PrintUser(response[i]);
+                //let comment = response[i];
+                //printedComments(comment);
+
+            }
+        }catch (e) {
+            $('#users-list').html(JSON.stringify(e));
+        }
+    }
+    fetchUserList();
+    
+    
+</script>
+</body>
+</html>
