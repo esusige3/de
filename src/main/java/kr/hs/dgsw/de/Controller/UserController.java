@@ -35,6 +35,6 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-    public boolean loginUser(@RequestBody User user){return this.userService.loginUser(user);}
+    public User loginUser(@RequestBody User user){return this.userService.loginUser(user);}
 
 }

@@ -23,10 +23,15 @@ public class Comment {
     private Long userId;
     private String content;
 
+    private String filePath;
+    private String fileName;
+
     @CreationTimestamp
     private LocalDateTime created;
     @UpdateTimestamp
     private LocalDateTime modified;
+
+
 
     public Comment(Long userId, String content){
         this.userId=userId;

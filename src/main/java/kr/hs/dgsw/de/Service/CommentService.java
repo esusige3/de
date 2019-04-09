@@ -4,6 +4,7 @@ import kr.hs.dgsw.de.Domain.Comment;
 import kr.hs.dgsw.de.Domain.User;
 import kr.hs.dgsw.de.Domain.WriteForm;
 import kr.hs.dgsw.de.Protocol.CommentUsernameProtocol;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

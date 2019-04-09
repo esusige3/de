@@ -56,7 +56,6 @@ public class AttachmentController {
         try {
 
             Optional<User> user  = this.userRepository.findById(id);
-
             User target =  user.get();
 
             //String filepath = "D://SpringDOC/uploaded2019/56/04/49fad13b-951d-44b4-a329-53184e294434_P.png";
@@ -78,7 +77,5 @@ public class AttachmentController {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-
-
     }
 }

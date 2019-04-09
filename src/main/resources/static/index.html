@@ -22,8 +22,47 @@
 </div>
 <div id="comments-list"></div>
 
+<button onclick="openLogindialog()">로그인 다이얼럭</button>
+<!--로그인 팝업-->
+<div id="container" style="display: none";>
+    <div id="login-container" >
+        <div style="background-color: white; padding: 0 30px; text-align: center;">
+            <div style="margin: 30px 0px 30px 0px">로그인</div>
+            <div> <input placeholder="사용자 아이디"></div>
+            <div><input placeholder="비번" type="password"></div>
+            <div style="margin: 30px 0">
+                <button >확인</button>
+                <button onclick="closeLoginDialog()">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    #login-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        background-color: #000000aa;
+    }
+</style>
+
 <script>
-    
+
+    let UserName;
+    let UserId;
+
+    function openLogindialog() {
+        $('#container').show(400);
+    }
+    function closeLoginDialog(){
+        $('#container').hide(1000);
+    }
+
     async function uploadFile() {
         try{
             let fileInput = $('#upload-file')[0].files[0];

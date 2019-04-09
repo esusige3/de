@@ -52,11 +52,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean loginUser(User user) {
-        if((this.userRepository.findByUsername(user.getUsername()).isPresent()&&this.userRepository.findByEmail(user.getEmail()).isPresent())) {
+    public User loginUser(User user) {
+        /*if((this.userRepository.findByUsername(user.getUsername()).isPresent()&&this.userRepository.findByEmail(user.getEmail()).isPresent())) {
 
             return true;
+        }*/
+        Optional<User> found = this.userRepository.findByUserId(user.getUserId());
+        if(found.isPresent()){
+            User find = found.get();
+            if(find.getPassword().equals(user.getPassword())){
+                return find;
+            }
         }
-        return false;
+        return null;
     }
 }

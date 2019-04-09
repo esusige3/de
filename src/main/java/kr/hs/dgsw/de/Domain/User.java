@@ -18,12 +18,15 @@ public class User {
     @GeneratedValue
     private Long id;
 
+    private String userId;
     private String username;
     private String email;
+    private String password;
 
     private String profilePathName;
     private String profileFileName;
     private String originalFileName;
+
 
 
 
@@ -33,8 +36,11 @@ public class User {
     private LocalDateTime modified;
 
 
-    public User(String username, String email){
+    public User(String userId,String username, String email,String password,String profilePathName){
+        this.userId = userId;
         this.username = username;
         this.email = email;
+        this.password = password;
+        this.profilePathName = profilePathName;
     }
 }

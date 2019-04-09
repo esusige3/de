@@ -8,6 +8,8 @@ import kr.hs.dgsw.de.Repository.CommentRepository;
 import kr.hs.dgsw.de.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -23,11 +25,10 @@ public class CommentServiceImpl implements CommentService {
 
     @PostConstruct
     private void init(){
-        User u = new User("abc","Dgsw@dgsw");
+        User u = new User("esusige","abc","Dgsw@dgsw","shasha","D://SpringDOC//uploaded2019//32//03//01967ad6-7953-4ffe-baa9-ca9c78fca421_charat.png");
         this.userRepository.save(u);
         this.commentRepository.save(new Comment(u.getId(),"hi there111"));
-        this.commentRepository.save(new Comment(u.getId(),"hi there222"));
-        this.commentRepository.save(new Comment(u.getId(),"hi there333"));
+
     }
 
 
