@@ -27,11 +27,10 @@ public class User {
     private String profileFileName;
     private String originalFileName;
 
-
-
-
     @CreationTimestamp
     private LocalDateTime joined;
+
+
     @UpdateTimestamp
     private LocalDateTime modified;
 

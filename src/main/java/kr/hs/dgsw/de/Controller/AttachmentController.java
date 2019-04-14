@@ -1,7 +1,9 @@
 package kr.hs.dgsw.de.Controller;
 
+import kr.hs.dgsw.de.Domain.Comment;
 import kr.hs.dgsw.de.Domain.User;
 import kr.hs.dgsw.de.Protocol.AttachmentProtocol;
+import kr.hs.dgsw.de.Repository.CommentRepository;
 import kr.hs.dgsw.de.Repository.UserRepository;
 import kr.hs.dgsw.de.Service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class AttachmentController {
     AttachmentService attachmentService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CommentRepository commentRepository;
     @PostMapping("/attachment")
     public AttachmentProtocol upload(@RequestPart MultipartFile file){
 
@@ -51,10 +55,15 @@ public class AttachmentController {
         return this.attachmentService.uploadProfile(id, file);
     }
 
-    @GetMapping("/attachment/download/{id}")
-    public void download(HttpServletRequest request, HttpServletResponse response,@PathVariable Long id){
-        try {
+    @PostMapping("/attachment/comment/{id}")
+    public boolean Cappend(@PathVariable Long id, @RequestPart MultipartFile file ){
+        return this.attachmentService.uploadCommentImage(id, file);
+    }
 
+    @GetMapping("/attachment/download/{mode}/{id}")
+    public void download(HttpServletRequest request, HttpServletResponse response,@PathVariable Long id,@PathVariable int mode){
+        if(mode == 1){
+        try {
             Optional<User> user  = this.userRepository.findById(id);
             User target =  user.get();
 
@@ -77,5 +86,32 @@ public class AttachmentController {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+        }
+        else{
+            try {
+                Optional<Comment> user  = this.commentRepository.findById(id);
+                Comment target =  user.get();
+
+                //String filepath = "D://SpringDOC/uploaded2019/56/04/49fad13b-951d-44b4-a329-53184e294434_P.png";
+                String filepath = target.getFilePath();
+                //String filename = "49fad13b-951d-44b4-a329-53184e294434_P.png";
+                String filename = target.getFileName();
+
+                File file = new File(filepath);
+                if (!file.exists()) return;
+
+                String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+                if (mimeType == null) mimeType = "application/octet-stream";
+                response.setContentType(mimeType);
+                response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
+                response.setContentLength((int) file.length());
+
+                InputStream is = new BufferedInputStream(new FileInputStream(file));
+                FileCopyUtils.copy(is,response.getOutputStream());
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+
     }
 }

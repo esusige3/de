@@ -11,7 +11,7 @@
 <body>
 
 <header>
-    <h1 style="text-align: center">초★미니 SNS</h1>
+    <h1 style="text-align: center">초미니 SNS</h1>
 </header>
 
 <section>
@@ -22,57 +22,71 @@
 </section>
 
 <aside>
-    <div><img id="dProfile" src="null.jpg" width="100px" height="100px"></div>
+    <div><img id="dProfile" src="null.jpg" width="200px" height="200px"></div>
     <div id="dUsername">회원이름</div>
     <div id="dUserEmail">이메일</div>
-    <button onclick="openLogindialog()">로그인 다이얼럭</button>
+    <div id="dUserDay"></div>
+    <button onclick="openLogindialog()">로그인</button>
+
 </aside>
 
 <footer>
 
 </footer>
 <style>
-    body{margin: 0;}
-    header{
-        height: 100px; width: 100vw; background-color: aqua;
+    body {
+        margin: 0;
     }
-    aside{
+
+    header {
+        height: 100px;
+        width: 100vw;
+        background-color: burlywood;
+    }
+
+    aside {
         position: absolute;
-        top: 100px; right: 0;width: 200px;height: 100vh;
-        background-color: red;
+        top: 100px;
+        right: 0;
+        width: 200px;
+        height: 100vh;
+        background-color: blanchedalmond;
     }
-    section{position: absolute;
+
+    section {
+        position: absolute;
         top: 100px;
         left: 0;
-    right: 200px;bottom: 0;
-    background-color: blue;}
-    footer{
-        border: 1px solid silver;
-        height: 100px;
+        right: 200px;
+        bottom: 0;
+        background-color: white;
     }
+
+
 
 </style>
 
 <!--로그인 팝업-->
-<div id="container-login" style="display: none";>
-    <div id="login-container" >
+<div id="container-login" style="display: none" ;>
+    <div id="login-container">
         <div style="background-color: white; padding: 0 30px; text-align: center;">
             <div style="margin: 30px 0px 30px 0px">로그인</div>
-            <div> <input id="userId" placeholder="사용자 아이디"></div>
+            <div><input id="userId" placeholder="사용자 아이디"></div>
             <div><input id="userPw" placeholder="비번" type="password"></div>
             <div style="margin: 30px 0">
-                <button onclick="login()" >확인</button>
+                <button onclick="login()">확인</button>
                 <button onclick="closeLoginDialog()">취소</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="container-content" style="display: none";>
+<!--글쓰기 팝업-->
+<div id="container-content" style="display: none" ;>
     <div id="content-container">
         <div style="background-color: white; padding: 0 30px; text-align: center;">
-            <div style="margin: 30px 0px 30px 0px"><input type="file" id="loadedFile"><button>확인</button></div>
-            <div> <input id="comment" placeholder="사진설명"></div>
+            <div style="margin: 30px 0px 30px 0px"><input type="file" id="loadedFile"></div>
+            <div><input id="comment" placeholder="사진설명"></div>
             <div style="margin: 30px 0">
                 <button onclick="writeComment()">확인</button>
                 <button onclick="closeContentDialog()">취소</button>
@@ -81,19 +95,25 @@
     </div>
 </div>
 
+<!--회원가입 팝업-->
+<div id="container-regist" style="display: none" ;>
+    <div id="regist-container">
+        <div style="background-color: white; padding: 0 30px; text-align: center;">
+            <div style="margin: 30px 0px 30px 0px">회원가입</div>
+            <div><input id="rId" placeholder="아이디"></div>
+            <div><input id="rPw" placeholder="비번" type="password"></div>
+            <div><input id="rName" placeholder="닉네임"></div>
+            <div><input id="rEmail" placeholder="이메일"></div>
+            <div style="margin: 30px 0">
+                <button>확인</button>
+                <button onclick="closeRegistDialog()">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-    #login-container{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        left: 0;
-        top: 0;
-        background-color: #000000aa;
-    }
-    #content-container{
+    #login-container, #regist-container, #content-container {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -114,24 +134,38 @@
     function openLogindialog() {
         $('#container-login').show(400);
     }
-    function closeLoginDialog(){
+
+    function closeLoginDialog() {
         $('#container-login').hide(300);
     }
-    function openContentdialog(){
-        if(!UserName){
+
+    function openContentdialog() {
+        if (!UserId) {
             alert("로그인 후 이용가능한 서비스입니다.");
+            openLogindialog();
             return;
         }
         $('#container-content').show(400);
     }
-    function closeContentDialog(){
+
+    function closeContentDialog() {
         $('#container-content').hide(300);
     }
+
+    function openRegistdialog() {
+        $('#container-regist').show(400);
+    }
+
+    function closeRegistDialog() {
+        $('#container-regist').hide(300);
+    }
+
+
     async function uploadFile() {
-        try{
+        try {
             let fileInput = $('#upload-file')[0].files[0];
             let formData = new FormData();//<form></form>
-            formData.append("file",fileInput);
+            formData.append("file", fileInput);
             console.log("받았음");
 
             let response = await $.ajax({
@@ -142,32 +176,36 @@
                 processData: false
             });
             console.log(response);
-        }catch (e) {
+        } catch (e) {
             console.log("안보내짐...")
         }
     }
 
     function printedComments(comment) {
-        $('#comments-list').append(
+        var string ="/attachment/download/0/"+comment.id;
+        $('#comments-list').prepend(
             `<div id="line${comment.id}" style="display: flex; border-bottom: 1px solid silver;">
+                    <div><img src="/attachment/download/0/${comment.id}" width="100px" height="100px"></div>
                      <div style="width: 150px;">${comment.username}</div>
                      <div style="width: 350px;overflow: auto;">${comment.content}</div>
+                     <div style="width: 350px;overflow: auto;">최초생성일: ${comment.created}</div>
                      <div><button onclick="edit(this,${comment.id})">수정</button>
                      <button onclick="deletData(${comment.id},this)">삭제</button></div></div>`
         );
     }
 
-    async function fetchCommentList(){
-        try{
+
+    async function fetchCommentList() {
+        try {
             let response = await $.get('/comment/list');
             // $('#comments-list').html(JSON.stringify(response));
-            for(let i=0;i<response.length;i++){
+            for (let i = 0; i < response.length; i++) {
                 printedComments(response[i]);
                 //let comment = response[i];
                 //printedComments(comment);
 
             }
-        }catch (e) {
+        } catch (e) {
             $('#comments-list').html(JSON.stringify(e));
         }
     }
@@ -175,32 +213,37 @@
 
     let content = null;
 
-    async function edit(button,id){
+    async function edit(button, id) {
         let line = $(`#line${id}`);
-        if($(button).text()==='수정'){
-            content = $(line).find('div:nth-child(2)').html();
-            let input =`<input value="${content}">`;
-            line.find('div:nth-child(2)').html(input);
+        if(!UserId){
+            alert("로그인 후 이용가능한 서비스");
+            openLogindialog();
+            return;
+        }
+        if ($(button).text() === '수정') {
+            content = $(line).find('div:nth-child(3)').html();
+            let input = `<input value="${content}">`;
+            line.find('div:nth-child(3)').html(input);
             line.find('input').focus();
             $(button).text('확인!');
             $(button).next().text('취소');
-        }else if($(button).text()==='확인!'){
+        } else if ($(button).text() === '확인!') {
             let response = await $.ajax({
                 type: "PUT",
-                url: "/comment/modi/"+id,
+                url: "/comment/modi/" + id,
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
-                data: JSON.stringify(line.find('input').val().replace(/"/g, "")),
-                success:function () {
+                data: JSON.stringify(line.find('input').val().replace(/\"/g, '')),
+                success: function () {
                     let line = $(`#line${id}`);
-                    line.find('div:nth-child(2)').html(line.find('input').val());
+                    line.find('div:nth-child(3)').html(line.find('input').val());
                     $(button).text('삭제');
                     $(button).prev().text('수정');
 
                 },
-                error : function (e) {
+                error: function (e) {
                     alert("수정 오류!");
-                },complete : function () {
+                }, complete: function () {
                     $(button).text('수정');
                     $(button).next().text('삭제');
                 }
@@ -208,8 +251,9 @@
         }
 
     }
+
     async function writeComment() {
-        try{
+        try {
 
 
             let obj = new Object();
@@ -224,20 +268,39 @@
                 contentType: 'application/json',
                 data: obj
             });
-            $('#comments-list').append(
+            let fileInput = $('#loadedFile')[0].files[0];
+
+            let formData = new FormData();//<form></form>
+            formData.append("file", fileInput);
+
+            console.log( JSON.stringify(response.id));
+            let reResponse = await $.post({
+                url: '/attachment/comment/'+JSON.stringify(response.id),
+                data: formData,
+                contentType: false,
+                processData: false
+            });
+
+           $('#comments-list').append(
                 printedComments(response));
+          // fetchCommentList();
             closeContentDialog();
-
-        }catch (e) {
-
+            $('#comment').val(null);$('#loadedFile').val(null);
+            closeContentDialog();
+        } catch (e) {
+            alert("이미지를 등록해 주세요...");
         }
-
-
     }
-    async function deletData(id,button) {
-        if($(button).text()==='삭제') {
+
+    async function deletData(id, button) {
+        if(!UserId){
+            alert("로그인 후 사용가능한 서비스 입니다.");
+            openLogindialog();
+            return;
+        }
+        if ($(button).text() === '삭제') {
             try {
-                if (confirm('Are you sure about that?') === true) {
+                if (confirm('진짜 삭제하시겠습니까?(삭제 후 복구불가.)') === true) {
                     let resonse = await $.ajax({
                         type: 'delete',
                         url: `/comment/delete/${id}`
@@ -251,45 +314,47 @@
                 console.log(JSON.stringify(e));
 
             }
-        }else if($(button).text() ==='취소'){
+        } else if ($(button).text() === '취소') {
             let line = $(`#line${id}`);
-            line.find('div:nth-child(2)').html(content);
+            line.find('div:nth-child(3)').html(content);
             $(button).text('삭제');
             $(button).prev().text('수정');
         }
     }
+
     //fetchCommentList();
     ///////////////////////////여기서부터 유저 매니지먼트////////////////////////////////////////
 
     async function uploadProfile() {
-        try{
+        try {
             let userId = $('#uId').val();
 
             let fileInput = $('#upload-file')[0].files[0];
             let formData = new FormData();//<form></form>
-            formData.append("file",fileInput);
-            console.log("받았음");
+            formData.append("file", fileInput);
 
 
             let response = await $.ajax({
                 type: 'POST',
-                url: '/attachment/appendProfile/'+userId,
+                url: '/attachment/appendProfile/' + userId,
                 data: formData,
                 contentType: false,
                 processData: false
             });
             console.log(response);
             alert("등록 완료!");
-        }catch (e) {
-            console.log("안보내짐...")
+        } catch (e) {
+            alert("이미지등록 안됨(없거나 안된거)");
             console.log(JSON.stringify(e));
+        }finally {
+            closeContentDialog();
         }
 
     }
 
 
     async function registUser() {
-        try{
+        try {
             let userPack = new Object();
             userPack.username = $('#uName').val();
             userPack.email = $('#uEmail').val();
@@ -301,7 +366,7 @@
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
                 data: userPack,
-                success:function () {
+                success: function () {
                     alert("가입을 축하합니다.");
 
 
@@ -314,14 +379,14 @@
             $('#users-list').append(
                 PrintUser(response));
 
-        }catch (e) {
+        } catch (e) {
             alert("완전한 오류!(콘솔을 확인하세요)");
             console.log(JSON.stringify(e));
         }
     }
 
-    async function SecessionUser(id, button){
-        if($(button).text()==='삭제') {
+    async function SecessionUser(id, button) {
+        if ($(button).text() === '삭제') {
             try {
                 if (confirm('Are you sure about that?') === true) {
                     let resonse = await $.ajax({
@@ -337,7 +402,7 @@
                 console.log(JSON.stringify(e));
 
             }
-        }else if($(button).text() ==='취소'){
+        } else if ($(button).text() === '취소') {
             let line = $(`#line${id}`);
             line.find('div:nth-child(2)').html(content);
             $(button).text('삭제');
@@ -347,8 +412,8 @@
 
     async function login() {
         let userPack = new Object();
-        userPack.userId = $('#userId').val();
-        userPack.password = $('#userPw').val();
+        userPack.userId = $('#userId').val().replace(/\"/g, '');
+        userPack.password = $('#userPw').val().replace(/\"/g, '');
         userPack = JSON.stringify(userPack);
         console.log(userPack);
         try {
@@ -361,18 +426,41 @@
             });
             alert("로그인 성공!");
             console.log(response);
-            $('#dUsername').text("이름:  "+JSON.stringify(response.username));
-            $('#dUserEmail').text("이메일: "+JSON.stringify(response.email));UserId = response.id;
+
+
+
+           console.log(JSON.stringify(response.joined));
+
+            $('#dUsername').text("이름:  " + JSON.stringify(response.username));
+            $('#dUserEmail').text("이메일: " + JSON.stringify(response.email));
+
+            UserId = response.id;
             UserName = response.username;
+
+            var today = new Date();
+
+            var dateString = response.joined;
+            var dateArray = dateString.split("T");
+            console.log(dateArray);
+            var dateArray2 = dateArray[0].split("-");
+            dateArray2[0].replace(/\"/g, '');
+            console.log(dateArray2);
+            var date = new Date(dateArray2[0], Number(dateArray2[1])-1, dateArray2[2]);
+            console.log(date);
+            var betweenDay = (today.getTime() - date.getTime())/1000/60/60/24;
+
+            $('#dUserDay').text("가입된지"+betweenDay.toFixed(3)+"일 째");
+
+
+
+
+
             var image = document.getElementById('dProfile');
-            image.src = "http://localhost:8080/attachment/download/"+UserId;
-
-            //let getProfile = $.get('/attachment/download/'+UserId);
-
-
+            image.src = "http://localhost:8080/attachment/download/1/" + UserId;
 
             closeLoginDialog();
-        }catch (e) {
+        } catch (e) {
+            alert("없는 계정");
             console.log(e);
         }
     }
@@ -387,20 +475,21 @@
         );
     }
 
-    async function fetchUserList(){
-        try{
+    async function fetchUserList() {
+        try {
             let response = await $.get('/user/view');
             // $('#comments-list').html(JSON.stringify(response));
-            for(let i=0;i<response.length;i++){
+            for (let i = 0; i < response.length; i++) {
                 PrintUser(response[i]);
                 //let comment = response[i];
                 //printedComments(comment);
 
             }
-        }catch (e) {
+        } catch (e) {
             $('#users-list').html(JSON.stringify(e));
         }
     }
+
     fetchCommentList();
 
 </script>

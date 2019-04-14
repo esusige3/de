@@ -5,4 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface AttachmentService {
     boolean uploadProfile(Long userId, MultipartFile profile);
+    boolean uploadCommentImage(Long id, MultipartFile image);
 }

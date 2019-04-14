@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -25,9 +24,12 @@ public class CommentServiceImpl implements CommentService {
 
     @PostConstruct
     private void init(){
-        User u = new User("esusige","abc","Dgsw@dgsw","shasha","D://SpringDOC//uploaded2019//32//03//01967ad6-7953-4ffe-baa9-ca9c78fca421_charat.png");
+        User u = new User("esusige","abc","Dgsw@dgsw","shasha","D://SpringDOC//uploaded//admin.png");
+
         this.userRepository.save(u);
-        this.commentRepository.save(new Comment(u.getId(),"hi there111"));
+        User u2 = new User("admin","관리자","gogo@gogle","1","D://SpringDOC//uploaded//admin.png");
+        this.userRepository.save(u2);
+
 
     }
 
@@ -42,6 +44,7 @@ public class CommentServiceImpl implements CommentService {
             String username = (found.isPresent())?found.get().getUsername():null;
             cupList.add(new CommentUsernameProtocol(comment,username));//forEach는 return 이 void다
         });
+
         return cupList;
     }
 
